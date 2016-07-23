@@ -3,7 +3,8 @@
             [cljs.nodejs :refer [require]]
             [hiccups.runtime :as hiccupsrt])
   (:require-macros [hiccups.core :as hiccups :refer [html]]
-                   [phonsole-cli.macros :refer [load-hiccup-script]]))
+                   [phonsole-cli.macros :refer [load-hiccup-script]]
+                   [taoensso.timbre :as timbre :refer [debug]]))
 
 (def Express (require "express"))
 (def app (Express.))
@@ -11,10 +12,11 @@
 
 (def port 3000)
 
+(def server (atom nil))
 
 (defn get-token []
   (promise (fn [resolve reject]
-             (println "Starting Express")
+             (debug "Starting Express")
 
              (.get app "/" (fn [req res]
                              (.send res (html [:html               
@@ -26,9 +28,11 @@
 
              (.get app "/token/:token" (fn [req res]
                                          (.send res "Authentication complete, please close this tab")
+                                         (when @server
+                                           (.close @server))
                                          (resolve (-> (.-params req)
                                                       (aget "token")))))
              
-             (.listen app port (fn []
-                                 (println "Express started")
-                                 (open (str "http://localhost:" port)))))))
+             (reset! server (.listen app port (fn []
+                                               (debug "Express started")
+                                               (open (str "http://localhost:" port))))))))
