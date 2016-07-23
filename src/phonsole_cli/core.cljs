@@ -35,14 +35,15 @@
                   (.get config "Server"))]
     (debug "host:" ?host)
     (-> (promise (fn [resolve reject] (.readFile fs creds-path "utf8" (fn [err token]
-                                                                       (resolve token)))))
-        (then (fn [token]
-                (if token
-                  (promise (relay/start! token (:id args) ?host))
+                                                                        (resolve token)))))
+        (then (fn [?token]
+                (if ?token
+                  ?token
                   (-> (auth/get-token)
                       (then (fn [new-token]
                               (.writeFile fs creds-path new-token)
-                              (relay/start! new-token (:id args) ?host)))))))
+                              new-token))))))
+        (then #(relay/start! % (:id args) ?host))
         (then (fn [server-chan]
                 (debug "server connection complete")
                 (go-loop []
