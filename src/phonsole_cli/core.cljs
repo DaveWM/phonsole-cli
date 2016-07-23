@@ -13,6 +13,7 @@
 (nodejs/enable-util-print!)
 
 (def fs (require "fs"))
+(def config (require "config"))
 
 (def commandLineArgs (require "command-line-args"))
 (def cl-options (clj->js [{:name "verbose" :alias "v"}
@@ -28,16 +29,20 @@
   (debug "Starting Phonsole CLI")
   (debug "args:" args)
   (let [creds-path (str (-> process .-env .-HOME) "/phonsole-credentials")
-        input-chan (input/read-from-stdin)]
+        input-chan (input/read-from-stdin)
+        ?host (or (-> (.-env process)
+                      (aget "PHONSOLE_SERVER"))
+                  (.get config "Server"))]
+    (debug "host:" ?host)
     (-> (promise (fn [resolve reject] (.readFile fs creds-path "utf8" (fn [err token]
                                                                        (resolve token)))))
         (then (fn [token]
                 (if token
-                  (promise (relay/start! token (:id args)))
+                  (promise (relay/start! token (:id args) ?host))
                   (-> (auth/get-token)
                       (then (fn [new-token]
                               (.writeFile fs creds-path new-token)
-                              (relay/start! new-token)))))))
+                              (relay/start! new-token (:id args) ?host)))))))
         (then (fn [server-chan]
                 (debug "server connection complete")
                 (go-loop []

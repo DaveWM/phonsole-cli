@@ -8,13 +8,13 @@
    [promesa.core :refer [then promise]]
    ))
 
-(defn start! [token ?id]
+(defn start! [token ?id ?host]
   (debug "starting relay")
   (debug "token:" token)
   (let [opts (merge {:type :ws
                      :params {:Authorization token}
                      :protocol :http
-                     :host "localhost:8080"}
+                     :host (or ?host "localhost:8080")}
                     (and ?id {:client-id ?id}))
         {:keys [chsk ch-recv send-fn state]} (sente/make-channel-socket-client!
                                               "/chsk"
