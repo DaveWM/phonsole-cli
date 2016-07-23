@@ -1,6 +1,6 @@
 {
   "name": "phonsole",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "dependencies": {
     "command-line-args": "^3.0.0",
     "config": "^1.21.0",
