@@ -1,0 +1,15 @@
+{
+  "name": "phonsole",
+  "version": "0.0.1",
+  "dependencies": {
+    "command-line-args": "^3.0.0",
+    "express": "^4.14.0",
+    "open": "0.0.5",
+    "websocket": "^1.0.23"
+  },
+  "devDependencies": {
+    "source-map-support": "0.4.0",
+    "ws": "0.8.1"
+  },
+  "bin": "./dist/app.js"
+}
