@@ -6,7 +6,11 @@
    [cljs.core.async :as async :refer (<! >! put! chan close!)]
    [taoensso.sente  :as sente :refer (cb-success?)]
    [promesa.core :refer [then promise]]
+   [cljs.nodejs :as nodejs :refer [require process]]
    ))
+
+(def Moniker (require "moniker"))
+(def host-name (.hostname (require "os")))
 
 (defn start! [token ?id ?host]
   (debug "starting relay")
@@ -14,7 +18,8 @@
   (let [opts (merge {:type :ws
                      :params {:Authorization token}
                      :protocol :http
-                     :host (or ?host "localhost:8080")}
+                     :host (or ?host "localhost:8080")
+                     :client-id (or ?id (str host-name "-" (.choose Moniker)))}
                     (and ?id {:client-id ?id}))
         {:keys [chsk ch-recv send-fn state]} (sente/make-channel-socket-client!
                                               "/chsk"
