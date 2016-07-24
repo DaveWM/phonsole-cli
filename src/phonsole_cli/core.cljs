@@ -13,7 +13,6 @@
 (nodejs/enable-util-print!)
 
 (def fs (require "fs"))
-(def config (require "config"))
 
 (def commandLineArgs (require "command-line-args"))
 (def cl-options (clj->js [{:name "verbose" :alias "v"}
@@ -32,7 +31,7 @@
         input-chan (input/read-from-stdin)
         ?host (or (-> (.-env process)
                       (aget "PHONSOLE_SERVER"))
-                  (.get config "Server"))]
+                  "phonsole-server.herokuapp.com")]
     (debug "host:" ?host)
     (-> (promise (fn [resolve reject] (.readFile fs creds-path "utf8" (fn [err token]
                                                                         (resolve token)))))
