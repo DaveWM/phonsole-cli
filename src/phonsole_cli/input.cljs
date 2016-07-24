@@ -11,7 +11,7 @@
 (defn stream-to-chan [input]
   "converts a nodejs stream into a channel"
   (debug input)
-  (let [stdin-chan (chan (sliding-buffer 10))
+  (let [stdin-chan (chan (sliding-buffer 10000))
         rl (.createInterface readline (clj->js {:input input}))]
     (.on rl "line" (juxt println
                          #(go (>! stdin-chan %))))
