@@ -25,6 +25,11 @@
                                               "/chsk"
                                               opts)
         input-chan (chan)]
+
+    (.on process "SIGINT" (fn []
+                            (debug "SIGINT")
+                            (sente/chsk-disconnect! chsk)
+                            (.exit process)))
     
     (go-loop []
       (when-let [message (<! input-chan)]
