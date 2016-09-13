@@ -12,13 +12,13 @@
 (def Moniker (require "moniker"))
 (def host-name (.hostname (require "os")))
 
-(defn start! [token ?id ?host]
+(defn start! [token ?id host]
   (debug "starting relay")
   (debug "token:" token)
   (let [opts (merge {:type :ws
                      :params {:Authorization token}
                      :protocol :http
-                     :host (or ?host "localhost:8080")
+                     :host host
                      :client-id (or ?id (str host-name "-" (.choose Moniker)))}
                     (and ?id {:client-id ?id}))
         {:keys [chsk ch-recv send-fn state]} (sente/make-channel-socket-client!
@@ -26,19 +26,16 @@
                                               opts)
         input-chan (chan)]
 
-    (.on process "SIGINT" (fn []
-                            (debug "SIGINT")
-                            (sente/chsk-disconnect! chsk)
-                            (.exit process)))
+
     
     (go-loop []
-      (when-let [message (<! input-chan)]
-        (debug "sending:" message)
-        (send-fn [:sender/output {:output message}])
-        (recur))
-      (sente/chsk-disconnect! chsk))
+        (when-let [message (<! input-chan)]
+          (debug "sending:" message)
+          (send-fn [:sender/output {:output message}])
+          (recur))
+        (sente/chsk-disconnect! chsk))
 
-    (promise (fn [resolve]
+    (promise (fn [resolve reject]
                (add-watch state :open-watcher
                           #(when (:open? @state)
                              (resolve input-chan)))))))

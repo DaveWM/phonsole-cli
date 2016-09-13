@@ -18,10 +18,10 @@
                   "target"]
 
   :cljsbuild {
-    :builds [{:id "prod"
-              :source-paths ["src"]
-              :compiler {
-                :output-to "dist/app.js"
-                :output-dir "target/server_prod"
-                :target :nodejs
-                :optimizations :simple}}]})
+              :builds [{:id "prod"
+                        :source-paths ["src"]
+                        :compiler {
+                                   :output-to "dist/app.js"
+                                   :output-dir "target/server_prod"
+                                   :target :nodejs
+                                   :optimizations :simple}}]})
