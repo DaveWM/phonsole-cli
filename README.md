@@ -19,6 +19,7 @@ Command line args:
 ```bash
 	-v, --verbose     Turn on verbose output
 	--id              The id of the console, shown in the web UI. Defaults to a random name.
+	--no-ssl          Communicate with the server via http as opposed to https. This is intended to be used only when running the app locally for development purposes. It is not recommended for normal use.
 ```
 
 ## License

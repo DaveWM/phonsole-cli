@@ -14,7 +14,8 @@
 
 (def commandLineArgs (require "command-line-args"))
 (def cl-options (clj->js [{:name "verbose" :alias "v"}
-                          {:name "id"}]))
+                          {:name "id"}
+                          {:name "no-ssl"}]))
 (def args (js->clj (commandLineArgs cl-options) :keywordize-keys true))
 
 (timbre/set-level! (if (:verbose args)
@@ -34,10 +35,14 @@
         server-domain (or (-> (.-env process)
                               (aget "PHONSOLE_SERVER"))
                           "phonsole-server.herokuapp.com")
-        server-url (str "http://" server-domain)]
+        server-url (str "http://" server-domain)
+        use-ssl (not (:no-ssl args))]
     (debug "server url:" server-url)
+    (if use-ssl
+      (debug "Using SSL")
+      (debug "** SSL disabled **"))
     (-> (auth/get-token server-url)
-        (then #(relay/start! % (:id args) server-domain))
+        (then #(relay/start! % (:id args) server-domain (not (:no-ssl args))))
         (then (fn [server-chan]
                 (debug "server connection complete")
                 (go-loop []
