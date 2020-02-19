@@ -5,8 +5,8 @@
   (:require-macros [cljs.core.async.macros :refer (go go-loop)]
                    [taoensso.timbre :refer [debug]]))
 
-(def fs (require "fs"))
-(def readline (require "readline"))
+(def fs (js/require "fs"))
+(def readline (js/require "readline"))
 
 (defn stream-to-chan [input]
   "converts a nodejs stream into a channel"

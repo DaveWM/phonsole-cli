@@ -9,8 +9,8 @@
    [cljs.nodejs :as nodejs :refer [require process]]
    ))
 
-(def Moniker (require "moniker"))
-(def host-name (.hostname (require "os")))
+(def Moniker (js/require "moniker"))
+(def host-name (.hostname (js/require "os")))
 
 (defn start!
   ([token ?id host]
@@ -30,7 +30,7 @@
          input-chan (chan)]
 
 
-     
+
      (go-loop []
        (when-let [message (<! input-chan)]
          (debug "sending:" message)

@@ -12,7 +12,7 @@
 
 (nodejs/enable-util-print!)
 
-(def commandLineArgs (require "command-line-args"))
+(def commandLineArgs (js/require "command-line-args"))
 (def cl-options (clj->js [{:name "verbose" :alias "v"}
                           {:name "id"}
                           {:name "no-ssl"}]))
@@ -30,7 +30,7 @@
   (.on process "SIGINT" (fn []
                           (debug "SIGINT")
                           (.exit process)))
-  
+
   (let [input-chan (input/read-from-stdin)
         server-domain (or (-> (.-env process)
                               (aget "PHONSOLE_SERVER"))

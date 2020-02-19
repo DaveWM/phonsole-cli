@@ -7,11 +7,11 @@
                    [phonsole-cli.macros :refer [load-hiccup-script js-promise]]
                    [taoensso.timbre :as timbre :refer [debug]]))
 
-(def Express (require "express"))
+(def Express (js/require "express"))
 (def app (Express.))
-(def open (require "open"))
-(def fs (require "fs"))
-(def fetch (require "request-promise"))
+(def open (js/require "open"))
+(def fs (js/require "fs"))
+(def fetch (js/require "request-promise"))
 
 (def port 3000)
 
@@ -45,7 +45,7 @@
 (defn refresh-token [server-url]
   (-> (log-in server-url)
       (then (fn [new-token]
-              (.writeFile fs creds-path new-token)
+              (.writeFile fs creds-path new-token (constantly nil))
               new-token))))
 
 (defn check-logged-in [server-url token]
